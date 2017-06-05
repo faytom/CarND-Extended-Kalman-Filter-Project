@@ -53,17 +53,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   TODO:
     * update the state by using Extended Kalman Filter equations
   */
+  //update z_pred with h(x) function
   VectorXd z_pred(3);
   z_pred(0) = sqrt(x_(0) * x_(0) + x_(1) * x_(1));
   z_pred(1) = atan2(x_(1), x_(0));
-  //check division by zero
-  // if(fabs(c1) < 0.0001){
-  //   cout << "CalculateJacobian () - Error - Division by Zero" << endl;
-  //   return Hj;
-  // }
+  //TODO: check division by zero
   z_pred(2) = (x_(0)*x_(2) + x_(1)*x_(3)) / (z_pred(0));
   VectorXd y = z - z_pred;
 
+  // make sure y(1) is within (-pi, pi)
   if(y(1) > PI){
     y(1) -= 2*PI;
   }
