@@ -37,6 +37,8 @@ FusionEKF::FusionEKF() {
     * Set the process and measurement noises
   */
 
+  H_laser_ << 1, 0, 0, 0,
+              0, 1, 0, 0;
 
 }
 
@@ -105,8 +107,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
+    ekf_.Update(measurement_pack.raw_measurements_);
   } else {
     // Laser updates
+    ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   }
 
   // print the output

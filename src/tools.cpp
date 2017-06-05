@@ -15,18 +15,48 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   TODO:
     * Calculate the RMSE here.
   */
-	VectorXd RMSE(4);
+	// VectorXd RMSE(4);
 
-	VectorXd estLast(4);
-	estLast = estimations.back();
-	VectorXd gtLast(4);
-	gtLast = ground_truth.back();
+	// VectorXd estLast(4);
+	// estLast = estimations.back();
+	// VectorXd gtLast(4);
+	// gtLast = ground_truth.back();
 
-	RMSE(0) = sqrt((estLast(0) - gtLast(0)) *  (estLast(0) - gtLast(0)));
-	RMSE(1) = sqrt((estLast(1) - gtLast(1)) *  (estLast(1) - gtLast(1)));
-	RMSE(2) = sqrt((estLast(2) - gtLast(2)) *  (estLast(2) - gtLast(2)));
-	RMSE(3) = sqrt((estLast(3) - gtLast(3)) *  (estLast(3) - gtLast(3)));
-	return RMSE;
+	// RMSE(0) = sqrt((estLast(0) - gtLast(0)) *  (estLast(0) - gtLast(0)));
+	// RMSE(1) = sqrt((estLast(1) - gtLast(1)) *  (estLast(1) - gtLast(1)));
+	// RMSE(2) = sqrt((estLast(2) - gtLast(2)) *  (estLast(2) - gtLast(2)));
+	// RMSE(3) = sqrt((estLast(3) - gtLast(3)) *  (estLast(3) - gtLast(3)));
+	// return RMSE;
+	VectorXd rmse(4);
+	rmse << 0,0,0,0;
+
+	// check the validity of the following inputs:
+	//  * the estimation vector size should not be zero
+	//  * the estimation vector size should equal ground truth vector size
+	if(estimations.size() != ground_truth.size()
+			|| estimations.size() == 0){
+		cout << "Invalid estimation or ground_truth data" << endl;
+		return rmse;
+	}
+
+	//accumulate squared residuals
+	for(unsigned int i=0; i < estimations.size(); ++i){
+
+		VectorXd residual = estimations[i] - ground_truth[i];
+
+		//coefficient-wise multiplication
+		residual = residual.array()*residual.array();
+		rmse += residual;
+	}
+
+	//calculate the mean
+	rmse = rmse/estimations.size();
+
+	//calculate the squared root
+	rmse = rmse.array().sqrt();
+
+	//return the result
+	return rmse;
 }
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
